@@ -1,15 +1,15 @@
 # WebCrawler - NodeJs
 
-Path : /scrap
+Path : /scrap/depth=3
 
 ###indexWithoutAsync.js :
 
-Implemenation of Web Crawler without using async library. Url : https://www.medium.com and MaximumDepth is hard-coded.
+Implemenation of Web Crawler without using async library. Url : https://www.medium.com and MaximumDepth is hard-coded to 1. MaximumDepth can be modified by depth query.
 All msgs/errors are shown on console.
 
 ####Used Packages:
 
-* express
+* expredess
 * cheerio
 * request
 * fs
@@ -27,7 +27,7 @@ All msgs/errors are shown on console.
 
 ###index.js :
 
-Implemenation of Web Crawler using async library. Url : https://www.medium.com and MaximumDepth is hard-coded.
+Implemenation of Web Crawler using async library. Url : https://www.medium.com and MaximumDepth is hard-coded to 1. MaximumDepth can be modified by depth query.
 
 ####Used Packages:
 
