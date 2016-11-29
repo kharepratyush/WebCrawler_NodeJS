@@ -1,6 +1,6 @@
 # WebCrawler - NodeJs
 
-Path : /scrap/depth=3
+Path : /scrap?depth=3
 
 ###indexWithoutAsync.js :
 
