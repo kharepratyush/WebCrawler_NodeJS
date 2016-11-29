@@ -73,7 +73,14 @@ function Link(url,MaximumDepth)
   			{
     			if(isUrl($(link).attr('href')))
     			{
-    				if($(link).attr('href').indexOf("medium.com") > -1) 
+    				//Removing URls which are disallowed in robots.txt : https://medium.com/robots.txt
+    				if(($(link).attr('href').indexOf("medium.com/m/") > -1) 
+    					|| ($(link).attr('href').indexOf("medium.com/me/") > -1)
+    					|| ($(link).attr('href').indexOf("medium.com/@") > -1)
+    					|| ($(link).attr('href').indexOf("/edit") > -1))
+    					{}
+
+    				else if($(link).attr('href').indexOf("medium.com") > -1) 
     				{
     					if(visited[$(link).attr('href')] !== 1 )
     					{ 
@@ -97,7 +104,7 @@ function Link(url,MaximumDepth)
 		if(index>arr.length) return;
 
 		/*Setting timegap between two calls*/
-		setTimeout(Link(arr[index],MaximumDepth),30);
+		setTimeout(Link(arr[index],MaximumDepth),300);
 	});
 }
 
@@ -137,8 +144,17 @@ app.get('/scrap', function(req, res)
   				//Checking Validity of URLs
     			if(isUrl($(link).attr('href')))
     			{
+    				
+    				//Removing URls which are disallowed in robots.txt : https://medium.com/robots.txt
+    				if(($(link).attr('href').indexOf("medium.com/m/") > -1) 
+    					|| ($(link).attr('href').indexOf("medium.com/me/") > -1)
+    					|| ($(link).attr('href').indexOf("medium.com/@") > -1)
+    					|| ($(link).attr('href').indexOf("/edit") > -1))
+    					{}
+
+
     				//Checking if URL links within Medium.com
-    				if($(link).attr('href').indexOf("medium.com") > -1) 
+    				else if($(link).attr('href').indexOf("medium.com") > -1) 
     				{
 						//Checking if link is pre-visited or not    					
     					if(visited[$(link).attr('href')] !== 1)

@@ -52,7 +52,16 @@ var q = async.queue(function (task, next)
   			{
     			if(isUrl($(link).attr('href')))
     			{
-    				if($(link).attr('href').indexOf("medium.com") > -1) 
+    				
+    				//Removing URls which are disallowed in robots.txt : https://medium.com/robots.txt
+    				if(($(link).attr('href').indexOf("medium.com/m/") > -1) 
+    					|| ($(link).attr('href').indexOf("medium.com/me/") > -1)
+    					|| ($(link).attr('href').indexOf("medium.com/@") > -1)
+    					|| ($(link).attr('href').indexOf("/edit") > -1))
+    					{}
+
+    				//Only queuing the Allowed Urls
+    				else if($(link).attr('href').indexOf("medium.com") > -1) 
     				{
     					if(visited[$(link).attr('href')] !== 1 )
     					{ 
@@ -73,7 +82,7 @@ var q = async.queue(function (task, next)
 
 		if(error)
 			console.log(error);
-		setTimeout(next(),30);
+		setTimeout(next(),300);
 	});
 },5);
 
@@ -91,7 +100,7 @@ app.get('/scrap', function(req, res){
 	depth[Url]=0;
 
 	//Maximum Depth to be Scrapped can be set from here
-	var MaximumDepth=1;
+	var MaximumDepth=3;
 
 	//Create a empty file
 	fs.writeFile('test.csv', '', function (err) {
@@ -100,6 +109,7 @@ app.get('/scrap', function(req, res){
 
 	q.push({url : Url, MaximumDepth: MaximumDepth});
 	res.send("OK");
+
 });
 
 
