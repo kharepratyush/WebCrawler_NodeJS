@@ -12,7 +12,7 @@ function isUrl(s) {
 	return regexp.test(s);
 }
 
-/*Dafault Homepage*/
+/*Default Homepage*/
 app.get('/', function(req, res) {
 	res.send('Hello World!');
 });
