@@ -4,8 +4,6 @@ var request = require('request');
 var fs = require('fs');
 var async = require("async");
 
-
-
 var app = express();
 
 /*Function to check if a Link is a proper Link or not*/
@@ -20,17 +18,22 @@ app.get('/', function (req, res) {
 });
 
 var visited = []; //mapping to mark visited URls
+var depth = []; //mapping to save depth of each url
 
 var q = async.queue(function (task, next) 
 {    
-    console.log(task.url);
+    console.log(depth[task.url]+":"+task.url);
     url = task.url;
+    Max = task.MaximumDepth;
 
     if(url === undefined)
 	{ 	
 		next(); 
 	}
 	
+	if(depth[url]>Max){
+		return;
+	}
 	//console.log(url);
 
 	fs.appendFile('test.csv', url+',\n', function (err) {
@@ -38,6 +41,7 @@ var q = async.queue(function (task, next)
 			console.log(err);
 	});
 
+	
 	request(url, function(error, response, html){
 		if(!error){
         	$ = cheerio.load(html);
@@ -54,8 +58,12 @@ var q = async.queue(function (task, next)
     					{ 
     						if($(link).attr('href') !== undefined)
     						{	
-    							q.push({url: $(link).attr('href')}, function (err) {});
-    							visited[$(link).attr('href')]=1;
+    							if(depth[url]<Max)
+    							{
+    								q.push({url: $(link).attr('href'),MaximumDepth:Max}, function (err) {});
+    								visited[$(link).attr('href')]=1;
+    								depth[$(link).attr('href')]=depth[url]+1;
+    							}
     						}
 						}
 					}
@@ -70,7 +78,6 @@ var q = async.queue(function (task, next)
 },5);
 
 
-// assign a callback
 q.drain = function() {
     console.log('all items have been processed');
 }
@@ -81,12 +88,18 @@ app.get('/scrap', function(req, res){
 	Url = 'https://www.medium.com/';
 	//console.log(Url);
 	visited[Url]=1;
+	depth[Url]=0;
 
+	//Maximum Depth to be Scrapped can be set from here
+	var MaximumDepth=1;
+
+	//Create a empty file
 	fs.writeFile('test.csv', '', function (err) {
   		if (err) return console.log(err);
 	});
 
-	q.push({url : Url});
+	q.push({url : Url, MaximumDepth: MaximumDepth});
+	res.send("OK");
 });
 
 

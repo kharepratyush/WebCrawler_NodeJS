@@ -23,19 +23,21 @@ app.get('/', function (req, res)
 var index=1;//global variable for Index marking
 var arr = [];//array of links --update to absolute and relative if need arises
 var visited = []; //mapping to mark visited URls
+var depth = [];
 
 /*Function allLinks take the Links from the Homepage and then throttle it to limit of 5*/
-function allLinks(arr)
+function allLinks(arr,MaximumDepth)
 {
-	level = 1;
+	if(MaximumDepth==0) return;
+
 	for(;index<6;index=index+1)
 	{
-		Link(arr[index],level);
+		Link(arr[index],MaximumDepth);
 		if(index==5) break; //No increment after index reaches 5 to throttle maximum number of connections
 	}	
 }
 
-function Link(url,level)
+function Link(url,MaximumDepth)
 {
 
 	/*Base Cases : Url should be defined and index should be less than length of array*/
@@ -49,7 +51,9 @@ function Link(url,level)
 		console.log(index); return; 
 	}
 
-	console.log(level+":"+index+":"+url+":"+arr.length);
+	if(depth[url]>MaximumDepth) return;
+
+	console.log(depth[url]+":"+index+":"+url+":"+arr.length);
 
 	fs.appendFile('test.csv', url+',\n', function (err) 
 	{
@@ -63,7 +67,7 @@ function Link(url,level)
 		{
         	$ = cheerio.load(html);
   			
-  			links = $('a');//hyperlinks
+  			links = $('a');//list of hyperlinks
 
   			$(links).each(function(i, link)
   			{
@@ -73,8 +77,12 @@ function Link(url,level)
     				{
     					if(visited[$(link).attr('href')] !== 1 )
     					{ 
-    						arr.push($(link).attr('href'));
-    						visited[$(link).attr('href')]=1;
+    						if(depth[url]<MaximumDepth)
+    						{
+								arr.push($(link).attr('href'));
+    							visited[$(link).attr('href')]=1;
+    							depth[$(link).attr('href')]=depth[url]+1;
+    						}
 						}
 					}
 				}
@@ -89,47 +97,66 @@ function Link(url,level)
 		if(index>arr.length) return;
 
 		/*Setting timegap between two calls*/
-		setTimeout(Link(arr[index],level+1),30);
+		setTimeout(Link(arr[index],MaximumDepth),30);
 	});
 }
 
 /*Scraping homepage to get initail list of links*/
-app.get('/scrap', function(req, res){
-	
+app.get('/scrap', function(req, res)
+{	
 	url = 'https://www.medium.com/';
 	console.log(url);
+	
 	visited[url]=1;
 	arr.push(url);
+	depth[url]=0;
+
+	/*Maximum Depth can be set by changing value*/
+	var MaximumDepth=2;
 
 	fs.writeFile('test.csv', url+',\n', function (err) {
   		if (err) return console.log(err);
 	});
 
-	request(url, function(error, response, html){
+	if(MaximumDepth==0)
+	{
+		res.send("Done");
+		return;	
+	} 
 
+	/*Getting list of links from the Homepage*/
+	request(url, function(error, response, html)
+	{
         if(!error)
         {
         	$ = cheerio.load(html);
-  			
-  			links = $('a');//hyperlinks
+   			links = $('a');//all hyperlinks
   			
   			$(links).each(function(i, link)
   			{
+  				//Checking Validity of URLs
     			if(isUrl($(link).attr('href')))
     			{
+    				//Checking if URL links within Medium.com
     				if($(link).attr('href').indexOf("medium.com") > -1) 
     				{
+						//Checking if link is pre-visited or not    					
     					if(visited[$(link).attr('href')] !== 1)
     					{ 
-    						arr.push($(link).attr('href'));
-    						visited[$(link).attr('href')]=1;
+    						if(depth[url]<MaximumDepth)
+    						{
+								arr.push($(link).attr('href'));
+    							visited[$(link).attr('href')]=1;
+    							depth[$(link).attr('href')]=depth[url]+1;
+    						}
 						}
 					}
 				}
 			});
 
 			/*Passing Links of homepage to Throttling Function*/
-			allLinks(arr);
+			allLinks(arr,MaximumDepth);
+
   			res.send("test");
         }
 
