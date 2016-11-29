@@ -28,7 +28,7 @@ var q = async.queue(function (task, next)
 
     if(url === undefined)
 	{ 	
-		callback(); 
+		next(); 
 	}
 	
 	//console.log(url);
