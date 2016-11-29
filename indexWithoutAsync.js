@@ -99,7 +99,12 @@ app.get('/scrap', function(req, res) {
 	depth[url] = 0;
 
 	/*Maximum Depth can be set by changing value --depth[homePage]=0*/
-	var MaximumDepth = 2;
+	var MaximumDepth = 1;
+
+	if (req.query.depth) {
+		var d = req.query.depth;
+		MaximumDepth = d;
+	}
 
 	fs.writeFile('test.csv', url + ',\n', function(err) {
 		if (err) return console.log(err);

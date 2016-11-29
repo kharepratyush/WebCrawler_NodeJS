@@ -86,12 +86,19 @@ q.drain = function() {
 app.get('/scrap', function(req, res) {
 
 	Url = 'https://www.medium.com/';
+	var MaximumDepth = 1;
+
 	//console.log(Url);
+	if (req.query.depth) {
+		var d = req.query.depth;
+		MaximumDepth = d;
+	}
+
 	visited[Url] = 1;
 	depth[Url] = 0;
 
 	//Maximum Depth to be Scrapped can be set from here -- depth[homePage] = 0
-	var MaximumDepth = 1;
+
 
 	//Create a empty file
 	fs.writeFile('test.csv', '', function(err) {

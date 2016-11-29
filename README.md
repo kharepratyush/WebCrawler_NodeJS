@@ -5,6 +5,7 @@ Path : /scrap
 ###indexWithoutAsync.js :
 
 Implemenation of Web Crawler without using async library. Url : https://www.medium.com and MaximumDepth is hard-coded.
+All msgs/errors are shown on console.
 
 ####Used Packages:
 
