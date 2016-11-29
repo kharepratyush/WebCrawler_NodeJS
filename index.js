@@ -75,7 +75,7 @@ var q = async.queue(function(task, next) {
 			console.log(error);
 		setTimeout(next(), 300);
 	});
-}, 5);
+}, 5); //Maximum Number of connections is 5
 
 
 q.drain = function() {
@@ -90,8 +90,8 @@ app.get('/scrap', function(req, res) {
 	visited[Url] = 1;
 	depth[Url] = 0;
 
-	//Maximum Depth to be Scrapped can be set from here
-	var MaximumDepth = 3;
+	//Maximum Depth to be Scrapped can be set from here -- depth[homePage] = 0
+	var MaximumDepth = 1;
 
 	//Create a empty file
 	fs.writeFile('test.csv', '', function(err) {
