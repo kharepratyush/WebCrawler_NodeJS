@@ -7,23 +7,26 @@ var fs = require('fs');
 var app = express();
 
 /*Function to check if a Link is a proper Link or not*/
-function isUrl(s) {
+function isUrl(s) 
+{
    var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
    return regexp.test(s);
 }
 
 /*Dafault Homepage*/
-app.get('/', function (req, res) {
+app.get('/', function (req, res) 
+{
   res.send('Hello World!');
 });
 
 
-var index=1;
+var index=1;//global variable for Index marking
 var arr = [];//array of links --update to absolute and relative if need arises
 var visited = []; //mapping to mark visited URls
 
 /*Function allLinks take the Links from the Homepage and then throttle it to limit of 5*/
-function allLinks(arr){
+function allLinks(arr)
+{
 	level = 1;
 	for(;index<6;index=index+1)
 	{
@@ -48,13 +51,16 @@ function Link(url,level)
 
 	console.log(level+":"+index+":"+url+":"+arr.length);
 
-	fs.appendFile('test.csv', url+',\n', function (err) {
+	fs.appendFile('test.csv', url+',\n', function (err) 
+	{
 		if(err)
 			console.log(err);
 	});
 
-	request(url, function(error, response, html){
-		if(!error){
+	request(url, function(error, response, html)
+	{
+		if(!error)
+		{
         	$ = cheerio.load(html);
   			
   			links = $('a');//hyperlinks
@@ -87,7 +93,7 @@ function Link(url,level)
 	});
 }
 
-
+/*Scraping homepage to get initail list of links*/
 app.get('/scrap', function(req, res){
 	
 	url = 'https://www.medium.com/';
