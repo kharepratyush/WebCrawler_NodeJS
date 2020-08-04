@@ -2,14 +2,14 @@
 
 Path : /scrap?depth=3
 
-###indexWithoutAsync.js :
+### indexWithoutAsync.js :
 
 Implemenation of Web Crawler without using async library. Url : https://www.medium.com and MaximumDepth is hard-coded to 1. MaximumDepth can be modified by depth query.
 All msgs/errors are shown on console.
 
-####Used Packages:
+#### Used Packages:
 
-* expredess
+* express
 * cheerio
 * request
 * fs
@@ -25,11 +25,11 @@ All msgs/errors are shown on console.
 8. test.csv stores the output in csv format.
 
 
-###index.js :
+### index.js :
 
 Implemenation of Web Crawler using async library. Url : https://www.medium.com and MaximumDepth is hard-coded to 1. MaximumDepth can be modified by depth query.
 
-####Used Packages:
+#### Used Packages:
 
 * express
 * cheerio
